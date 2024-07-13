@@ -1,6 +1,6 @@
 #[starknet::interface]
 pub trait Isimulate<TContractState> {
-    fn simulate_growth(ref self: TContractState,  population:u128, growth_rate: u128);
+    fn simulate_growth(ref self: TContractState, population: u128, growth_rate: u128);
 }
 
 #[starknet::contract]
@@ -9,21 +9,38 @@ mod PopulationGrowth {
     struct Storage {
         population: u128,
     }
+    #[event]
+    #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
+    pub enum Event {
+        PopulationUpdated: PopulationUpdated,
+    }
+
+    #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
+    struct PopulationUpdated {
+        #[key]
+        pub Year: u32,
+        pub Population: u128,
+    }
 
 
     #[abi(embed_v0)]
     impl simulate of super::Isimulate<ContractState> {
-        fn simulate_growth(ref self: ContractState, population:u128, growth_rate: u128) {
-            let mut i: usize = 0;
+        fn simulate_growth(ref self: ContractState, population: u128, growth_rate: u128) {
+            let mut i: u32 = 0;
             loop {
                 if i > 10 {
                     break;
                 }
                 let growth = self.population.read() * growth_rate;
-                self.population.write(self.population.read() + growth );
-                println!("For the year {}: Population = {}", i, self.population.read());
+                self.population.write(self.population.read() + growth);
+                self
+                    .emit(
+                        Event::PopulationUpdated(
+                            PopulationUpdated { Year: i, Population: self.population.read() }
+                        )
+                    );
             }
         }
     }
-
 }
+
