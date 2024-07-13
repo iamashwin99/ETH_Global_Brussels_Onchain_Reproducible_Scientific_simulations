@@ -19,6 +19,7 @@ mod PopulationGrowth {
     struct PopulationUpdated {
         #[key]
         pub Year: u32,
+        #[key]
         pub Population: u128,
     }
 
@@ -27,8 +28,9 @@ mod PopulationGrowth {
     impl simulate of super::Isimulate<ContractState> {
         fn simulate_growth(ref self: ContractState, population: u128, growth_rate: u128) {
             let mut i: u32 = 0;
+            self.population.write(population);
             loop {
-                if i > 10 {
+                if i >= 10 {
                     break;
                 }
                 i = i + 1;
