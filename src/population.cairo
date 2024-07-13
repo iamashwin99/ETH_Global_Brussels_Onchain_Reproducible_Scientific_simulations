@@ -1,6 +1,6 @@
 #[starknet::interface]
 pub trait Isimulate<TContractState> {
-    fn simulate_growth(ref self: TContractState, value: u128);
+    fn simulate_growth(ref self: TContractState,  population:u128, growth_rate: u128);
 }
 
 #[starknet::contract]
@@ -18,11 +18,12 @@ mod PopulationGrowth {
             loop {
                 if i > 10 {
                     break;
-                    let growth = self.population.read() * growth_rate;
-                    self.population.write(self.population.read() + growth );
-                    println!("For the year {}: Population = {}", i, self.population.read());
                 }
+                let growth = self.population.read() * growth_rate;
+                self.population.write(self.population.read() + growth );
+                println!("For the year {}: Population = {}", i, self.population.read());
             }
         }
     }
+
 }
