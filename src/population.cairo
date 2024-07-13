@@ -31,7 +31,8 @@ mod PopulationGrowth {
                 if i > 10 {
                     break;
                 }
-                let growth = self.population.read() * growth_rate;
+                i = i + 1;
+                let growth = self.population.read() * (1 + growth_rate) / 100;
                 self.population.write(self.population.read() + growth);
                 self
                     .emit(
