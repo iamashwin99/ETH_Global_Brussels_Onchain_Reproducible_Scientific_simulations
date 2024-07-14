@@ -10,6 +10,7 @@ mod IsingSim {
     #[storage]
     struct Storage {
     }
+
     #[event]
     #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
     pub enum Event {
