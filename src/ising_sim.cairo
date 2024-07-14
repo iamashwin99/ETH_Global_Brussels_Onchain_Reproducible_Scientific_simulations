@@ -71,12 +71,17 @@ mod IsingSim {
                 // Convert the new state into an integer
                 i = 0;
                 let mut state = 0;
+                let power = 1;
                 loop {
                     if i>lb {
                         break;
                     }
+
+                    i = i + 1;
+                    power = power * 2;
+
                     if a[i] {
-                        state = state + (1 << i);
+                        state = state + power;
                     }
 
                 }
