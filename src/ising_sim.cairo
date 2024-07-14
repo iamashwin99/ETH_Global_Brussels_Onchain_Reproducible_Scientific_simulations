@@ -9,7 +9,6 @@ mod IsingSim {
 
     #[storage]
     struct Storage {
-        population: u128,
     }
     #[event]
     #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
@@ -20,7 +19,7 @@ mod IsingSim {
     #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
     struct PopulationUpdated {
         #[key]
-        pub A: ArrayTrait<bool>,
+        pub A: u32,
     }
 
 
@@ -53,23 +52,37 @@ mod IsingSim {
                 let index = (i * rand_seed) % lb;
 
                 // flip the bit and calculate deltaE
-                let mut deltaE = if a[index] { 0 } else { 1 };  // should actually have been -1 and 1
+                let mut deltaE = if a.get(index) { 0 } else { 1 };  // should actually have been -1 and 1
                 let deltaE = deltaE * 2;
-                let deltaE = deltaE * (a[(index-1)%lb] + a[(index+1)%lb]);
+                let deltaE = deltaE * (a.get((index-1)%lb) + a.get((index+1)%lb));
 
                 // There are more terms which we will ignore
 
                 // flip the bit if deltaE is 0 or less than the temperature cutooff
                 let temp_cutoff = 4;
                 if deltaE <= temp_cutoff {
-                    a[index] = !a[index];
+                    a.set(index) = !a.get(index);
                 }
+
+                // Convert the new state into an integer
+                i = 0;
+                let mut state = 0;
+                loop {
+                    if i>lb {
+                        break;
+                    }
+                    if a.get(i) {
+                        state = state + (1 << i);
+                    }
+
+                }
+
 
                 // emmit the data
                 self
                     .emit(
                         Event::PopulationUpdated(
-                            PopulationUpdated { A: a }
+                            PopulationUpdated { A: state }
                         )
                     );
             }
