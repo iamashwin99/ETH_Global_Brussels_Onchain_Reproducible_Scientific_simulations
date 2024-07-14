@@ -27,7 +27,7 @@ mod IsingSim {
     #[abi(embed_v0)]
     impl simulate of super::Isimulate<ContractState> {
         fn simulate_ising(ref self: ContractState) {
-            let lb = 5;
+            let lb :u32 = 5;
             let mut i :u32 = 0;
             let num_iterations :u32 = 10;
             let rand_seed :u32 = 9987;
@@ -50,7 +50,8 @@ mod IsingSim {
                 i = i + 1;
 
                 // choose the random cite
-                let index = (i * rand_seed) % lb;
+                let index :felt252 = ((i * rand_seed) % lb).try_into().unwrap();
+                let index_int :u32 = index.try_into().unwrap();
 
                 // flip the bit and calculate deltaE
                 let mut deltaE = 1;
@@ -58,13 +59,28 @@ mod IsingSim {
                 if a[index.try_into().unwrap()]  {
                     deltaE = 0;
                     }
-                let deltaE = deltaE * 2;
-                let deltaE = deltaE * (a[(index-1)%lb] + a[(index+1)%lb]);
+                deltaE = deltaE * 2;
+
+                // 5 here is lb
+                let left_index :felt252 = ((index_int - 1)%5).try_into().unwrap();
+                let right_index :felt252 = ((index_int + 1)%5).try_into().unwrap();
+
+                let mut E_left :u32 =0;
+                let mut E_right :u32 =0;
+                if a[left_index] {
+                    E_left = 1;
+
+                }
+                if a[right_index] {
+                    E_right = 1;
+                }
+                deltaE = deltaE * (E_left + E_right);
+                // let deltaE = deltaE * (a[(index-1)%lb] + a[(index+1)%lb]);
 
                 // There are more terms which we will ignore
 
                 // flip the bit if deltaE is 0 or less than the temperature cutooff
-                let temp_cutoff = 4;
+                let temp_cutoff :u32 = 4;
                 if deltaE <= temp_cutoff {
                     a.insert(index.try_into().unwrap(), !a[index]);
                 }
