@@ -5,7 +5,7 @@ pub trait Isimulate<TContractState> {
 
 #[starknet::contract]
 mod IsingSim {
-    use core::array::ArrayTrait;
+    use dict::Felt252DictTrait;
 
     #[storage]
     struct Storage {
@@ -30,13 +30,13 @@ mod IsingSim {
             let mut i = 0;
             let num_iterations = 10;
             let rand_seed = 9987;
-            let mut a = ArrayTrait::new();
-            // Set all elements to 1
+            let mut a = felt252_dict_new::<bool>();
+            // Set all elements to 1;
             loop {
                 if i >= lb {
                     break;
                 }
-                a.append(false);
+                a.insert(i, false);
                 i = i + 1;
             }
 
@@ -52,16 +52,20 @@ mod IsingSim {
                 let index = (i * rand_seed) % lb;
 
                 // flip the bit and calculate deltaE
-                let mut deltaE = if a.get(index) { 0 } else { 1 };  // should actually have been -1 and 1
+                let mut deltaE = 1;
+                // should actually have been -1
+                if a[index] {
+                    deltaE = 0;
+                    }
                 let deltaE = deltaE * 2;
-                let deltaE = deltaE * (a.get((index-1)%lb) + a.get((index+1)%lb));
+                let deltaE = deltaE * (a[(index-1)%lb] + a[(index+1)%lb]);
 
                 // There are more terms which we will ignore
 
                 // flip the bit if deltaE is 0 or less than the temperature cutooff
                 let temp_cutoff = 4;
                 if deltaE <= temp_cutoff {
-                    a.set(index) = !a.get(index);
+                    a.insert(index, !a[index]);
                 }
 
                 // Convert the new state into an integer
@@ -71,7 +75,7 @@ mod IsingSim {
                     if i>lb {
                         break;
                     }
-                    if a.get(i) {
+                    if a[i] {
                         state = state + (1 << i);
                     }
 
