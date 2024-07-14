@@ -20,7 +20,7 @@ mod IsingSim {
     #[derive(Copy, Drop, Debug, PartialEq, starknet::Event)]
     struct PopulationUpdated {
         #[key]
-        pub A: u32,
+        pub A: u32
     }
 
 
@@ -28,16 +28,16 @@ mod IsingSim {
     impl simulate of super::Isimulate<ContractState> {
         fn simulate_ising(ref self: ContractState) {
             let lb = 5;
-            let mut i = 0;
-            let num_iterations = 10;
-            let rand_seed = 9987;
+            let mut i :u32 = 0;
+            let num_iterations :u32 = 10;
+            let rand_seed :u32 = 9987;
             let mut a = felt252_dict_new::<bool>();
             // Set all elements to 1;
-            loop {
+            loop{
                 if i >= lb {
                     break;
                 }
-                a.insert(i, false);
+                a.insert(i.try_into().unwrap(), false);
                 i = i + 1;
             }
 
@@ -55,7 +55,7 @@ mod IsingSim {
                 // flip the bit and calculate deltaE
                 let mut deltaE = 1;
                 // should actually have been -1
-                if a[index] {
+                if a[index.try_into().unwrap()]  {
                     deltaE = 0;
                     }
                 let deltaE = deltaE * 2;
@@ -66,13 +66,13 @@ mod IsingSim {
                 // flip the bit if deltaE is 0 or less than the temperature cutooff
                 let temp_cutoff = 4;
                 if deltaE <= temp_cutoff {
-                    a.insert(index, !a[index]);
+                    a.insert(index.try_into().unwrap(), !a[index]);
                 }
 
                 // Convert the new state into an integer
                 i = 0;
                 let mut state = 0;
-                let power = 1;
+                let mut power = 1;
                 loop {
                     if i>lb {
                         break;
@@ -89,8 +89,7 @@ mod IsingSim {
 
 
                 // emmit the data
-                self
-                    .emit(
+                self.emit(
                         Event::PopulationUpdated(
                             PopulationUpdated { A: state }
                         )
