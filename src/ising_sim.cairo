@@ -60,8 +60,13 @@ mod IsingSim {
                 }
                 deltaE = deltaE * 2;
 
-                // 5 here is lb
-                let left_index: felt252 = ((index_int - 1) % 5).try_into().unwrap();
+                // 5 here is lb; hardcoding boundry conditions
+                let mut left_index: felt252 = 0;
+                if index_int != 0 {
+
+                    left_index= ((index_int - 1) % 5).try_into().unwrap();
+                }
+
                 let right_index: felt252 = ((index_int + 1) % 5).try_into().unwrap();
 
                 let mut E_left: u32 = 0;
