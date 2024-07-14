@@ -38,7 +38,7 @@ mod IsingSim {
                 }
                 a.insert(i.try_into().unwrap(), false);
                 i = i + 1;
-            }
+            };
 
             // Run the main loop
             i = 0;
@@ -98,7 +98,7 @@ mod IsingSim {
                     if a[i.try_into().unwrap()] {
                         state = state + power;
                     }
-                }
+                };
 
                 // emmit the data
                 self.emit(Event::PopulationUpdated(PopulationUpdated { A: state }));
