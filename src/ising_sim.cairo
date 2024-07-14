@@ -84,18 +84,18 @@ mod IsingSim {
                 }
 
                 // Convert the new state into an integer
-                i = 0;
+                let mut j: u32 = 0;
                 let mut state = 0;
                 let mut power = 1;
                 loop {
-                    if i > lb {
+                    if j > lb {
                         break;
                     }
 
-                    i = i + 1;
+                    j = j + 1;
                     power = power * 2;
 
-                    if a[i.try_into().unwrap()] {
+                    if a[j.try_into().unwrap()] {
                         state = state + power;
                     }
                 };
