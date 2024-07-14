@@ -97,7 +97,7 @@ mod IsingSim {
                     i = i + 1;
                     power = power * 2;
 
-                    if a[i] {
+                    if a[i.try_into().unwrap()] {
                         state = state + power;
                     }
 
